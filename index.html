@@ -40,6 +40,7 @@
         <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
       </button>
     </div>
+    <span class="progress" aria-hidden="true"></span>
   </header>
 
   <main id="main">
@@ -53,7 +54,13 @@
         <a class="btn" href="https://github.com/ashwathram-prathap">GitHub</a>
         <a class="btn" href="https://www.linkedin.com/in/ashwathram-prathap/">LinkedIn</a>
       </div>
-      <p class="now"><span class="label">Now</span>Building an autonomous, AI-powered side project with a friend in Guelph Mechatronics.</p>
+      <div class="now">
+        <span class="label">Now</span>
+        <ul>
+          <li>Building an LLM inference engine from scratch in C++ and Apple Metal.</li>
+          <li>Co-building a reaction-wheel cube that balances on its corner, as a step toward a scratch-built drone.</li>
+        </ul>
+      </div>
     </section>
 
     <dl class="frame stats" aria-label="Highlights">
@@ -122,6 +129,46 @@
             <!-- Add when ready: <a class="text-link" href="https://github.com/ashwathram-prathap/unimate">Code</a> <a class="text-link" href="DEMO-LINK">Demo</a> -->
           </footer>
         </article>
+
+        <article class="project">
+          <header class="project-head">
+            <h3>LLM Inference Engine</h3>
+            <p class="mono"><span class="wip">In Progress</span></p>
+          </header>
+          <dl class="facts">
+            <dt>What it is</dt>
+            <dd>A large language model inference engine built from scratch in C++20 and Apple Metal on my MacBook, built by directing Codex AI coding agents through a four-milestone plan.</dd>
+            <dt>Results so far</dt>
+            <dd>GPT-2 (124M parameters) runs end to end on CPU, with outputs matching a Hugging Face reference, at an 11.23 tokens/s naive baseline.</dd>
+            <dt>Next</dt>
+            <dd>Qwen2.5 chat, a Metal GPU backend, and 4-bit quantization benchmarked against llama.cpp.</dd>
+          </dl>
+          <footer class="project-foot">
+            <ul class="chips" aria-label="Stack">
+              <li>C++20</li><li>Apple Metal</li><li>Codex</li>
+            </ul>
+          </footer>
+        </article>
+
+        <article class="project">
+          <header class="project-head">
+            <h3>Reaction-Wheel Balancing Cube</h3>
+            <p class="mono">With a partner · <span class="wip">In Progress</span></p>
+          </header>
+          <dl class="facts">
+            <dt>What it does</dt>
+            <dd>A cube that balances on its corner using PID-tuned reaction wheels, as a first step toward building a drone from scratch.</dd>
+            <dt>My part</dt>
+            <dd>I wrote the control software (IMU reads, quaternion orientation math, PID loop); my partner did the CAD.</dd>
+            <dt>Status</dt>
+            <dd>First prototype built in 4 days; now redesigning the brackets and learning PCB design for version two.</dd>
+          </dl>
+          <footer class="project-foot">
+            <ul class="chips" aria-label="Stack">
+              <li>Arduino C++</li><li>IMU</li><li>PID</li>
+            </ul>
+          </footer>
+        </article>
       </div>
     </section>
 
@@ -133,13 +180,14 @@
       <div class="block-body">
         <article class="row">
           <header>
-            <h3>Team Lead, FIRST Robotics Competition</h3>
+            <h3>Team Lead &amp; Business Lead, FIRST Robotics Competition</h3>
             <p class="org">Bishop P. F. Reding CSS, Milton</p>
             <p class="mono when">2024 to 2026</p>
           </header>
           <ul>
-            <li>Led the full team and directed development of the robot's autonomous driving routines for competition matches.</li>
             <li>Raised over $100,000 alongside teammates for build, travel and competitions.</li>
+            <li>Ran a 12-student business team: sponsor outreach, cold-calling training and in-kind sponsorships.</li>
+            <li>Led the full team and directed development of the robot's autonomous driving routines for competition matches.</li>
           </ul>
         </article>
 
@@ -240,7 +288,7 @@
       <div class="block-body">
         <dl class="facts skills">
           <dt>Code</dt>
-          <dd><ul class="chips"><li>Java</li><li>TypeScript</li><li>Node.js</li><li>React</li><li>Convex</li><li>Python (in progress)</li></ul></dd>
+          <dd><ul class="chips"><li>Java</li><li>TypeScript</li><li>Node.js</li><li>C++ (Arduino)</li><li>Python (in progress)</li></ul></dd>
           <dt>AI</dt>
           <dd><ul class="chips"><li>Claude Code</li><li>Codex</li><li>Snowflake Cortex</li><li>ElevenLabs</li></ul></dd>
           <dt>Business</dt>
@@ -318,6 +366,53 @@
           });
         }, { rootMargin: "-45% 0px -50% 0px" });
         document.querySelectorAll(".block").forEach(function (s) { spy.observe(s); });
+      }
+
+      var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* Reading progress: a thin line along the bottom of the nav */
+      var bar = document.querySelector(".progress");
+      var ticking = false;
+      function drawProgress() {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.transform = "scaleX(" + (max > 0 ? Math.min(window.scrollY / max, 1) : 0) + ")";
+        ticking = false;
+      }
+      window.addEventListener("scroll", function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(drawProgress); }
+      }, { passive: true });
+      drawProgress();
+
+      /* Content rises in, once, as it scrolls into view */
+      if (!calm && "IntersectionObserver" in window) {
+        var groups = document.querySelectorAll(".stats, .block, .contact");
+        var rise = new IntersectionObserver(function (items) {
+          items.forEach(function (item) {
+            if (!item.isIntersecting) return;
+            item.target.classList.add("in");
+            rise.unobserve(item.target);
+          });
+        }, { rootMargin: "0px 0px -10% 0px" });
+        groups.forEach(function (group) {
+          group.querySelectorAll(".stats > div, .block-head, .project, .row, .skills, .contact > *").forEach(function (el, i) {
+            el.classList.add("rise");
+            el.style.transitionDelay = Math.min(i, 5) * 70 + "ms";
+            /* Drop the stagger afterwards so hover effects stay instant */
+            el.addEventListener("transitionend", function () { el.style.transitionDelay = ""; }, { once: true });
+          });
+          rise.observe(group);
+        });
+      }
+
+      /* Project cards: a soft light follows the pointer */
+      if (!calm && window.matchMedia("(hover: hover)").matches) {
+        document.querySelectorAll(".project").forEach(function (card) {
+          card.addEventListener("pointermove", function (e) {
+            var r = card.getBoundingClientRect();
+            card.style.setProperty("--mx", e.clientX - r.left + "px");
+            card.style.setProperty("--my", e.clientY - r.top + "px");
+          });
+        });
       }
     })();
   </script>

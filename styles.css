@@ -10,6 +10,8 @@
   --grid: rgba(10, 10, 10, 0.055);
   --nav: rgba(250, 250, 249, 0.8);
   --live: #16A34A;
+  --wip: #D97706;
+  --spot: rgba(10, 10, 10, 0.045);
   --gold: #E2B12C;
 
   --sans: "Geist", "Inter", "Helvetica Neue", Arial, sans-serif;
@@ -31,6 +33,8 @@
     --grid: rgba(255, 255, 255, 0.05);
     --nav: rgba(10, 10, 10, 0.75);
     --live: #22C55E;
+    --wip: #FBBF24;
+    --spot: rgba(255, 255, 255, 0.06);
     color-scheme: dark;
   }
 }
@@ -45,6 +49,8 @@
   --grid: rgba(255, 255, 255, 0.05);
   --nav: rgba(10, 10, 10, 0.75);
   --live: #22C55E;
+  --wip: #FBBF24;
+  --spot: rgba(255, 255, 255, 0.06);
   color-scheme: dark;
 }
 
@@ -118,6 +124,17 @@ main > .frame::after {
   -webkit-backdrop-filter: saturate(1.4) blur(12px);
   backdrop-filter: saturate(1.4) blur(12px);
   border-bottom: 1px solid var(--border);
+}
+.progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--fg);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0.55;
 }
 .nav-inner {
   display: flex;
@@ -274,17 +291,59 @@ h1 {
 .btn-primary:hover { opacity: 0.86; border-color: var(--fg); }
 
 .now {
+  display: flex;
+  align-items: baseline;
   margin: 2.5rem 0 0;
   font-size: 0.9rem;
   color: var(--muted);
 }
+.now ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.now li + li { margin-top: 0.3rem; }
 .label {
+  flex: none;
   font-family: var(--mono);
   font-size: 0.75rem;
   color: var(--fg);
   margin-right: 0.75rem;
   padding-right: 0.75rem;
   border-right: 1px solid var(--border-strong);
+}
+
+/* "In Progress" tag on projects, with a quiet pulse */
+.wip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--wip);
+}
+.wip::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
+  animation: breathe 2.4s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Scroll-in: added by JavaScript only, so nothing stays hidden without it */
+.rise {
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(3px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.7s ease;
+}
+.in .rise {
+  opacity: 1;
+  transform: none;
+  filter: none;
 }
 
 /* Load-in: the hero rises once, quietly */
@@ -369,10 +428,28 @@ h3 {
   border-radius: 14px;
   background: var(--surface);
   padding: 1.75rem;
+  position: relative;
+  isolation: isolate;
   transition: border-color 0.2s ease;
+}
+.project.rise {
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.7s ease, border-color 0.2s ease;
 }
 .project + .project { margin-top: 1rem; }
 .project:hover { border-color: var(--border-strong); }
+/* Soft light that follows the pointer (position set by JavaScript) */
+.project::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), var(--spot), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.project:hover::before { opacity: 1; }
 .project-head {
   display: flex;
   flex-wrap: wrap;
@@ -534,4 +611,6 @@ h3 {
     transition: none !important;
     animation: none !important;
   }
+  .rise { opacity: 1; transform: none; filter: none; }
+  .progress { display: none; }
 }
