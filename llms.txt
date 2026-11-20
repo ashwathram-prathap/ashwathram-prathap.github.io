@@ -1,6 +1,6 @@
 # Ashwathram Prathap
 
-> Ashwathram Prathap (sometimes written Ashwath Prathap; handle ashwathram-prathap; pronounced ush-vuth-rum pruh-thaap) studies computer science at the University of Waterloo and business at Wilfrid Laurier University in the CS + BBA co-op double degree. He builds AI products and low-level systems. Website: https://ashwathram.ca
+> Ashwathram Prathap (sometimes written Ashwath Prathap; handle ashwathram-prathap; pronounced ush-vuth-raam pruh-thaap) studies computer science at the University of Waterloo and business at Wilfrid Laurier University in the CS + BBA co-op double degree. He builds AI products and low-level systems. Website: https://ashwathram.ca
 
 ## Projects
 - LLM Inference Engine: a large language model inference engine built from scratch in C++20 and Apple Metal by directing Codex AI coding agents. Runs GPT-2 and Qwen2.5 (0.5B and 7B). Qwen2.5-7B in 4-bit decodes at 22.3 tokens/s in 4.09 GiB, about 82% of llama.cpp's speed on byte-identical weights; a 4-bit GPU kernel fix gave 3.1x faster decode.
