@@ -5,7 +5,7 @@
 ## Projects
 - LLM Inference Engine: a large language model inference engine built from scratch in C++20 and Apple Metal by directing Codex AI coding agents. Runs GPT-2 and Qwen2.5 (0.5B and 7B). Qwen2.5-7B in 4-bit decodes at 22.3 tokens/s in 4.09 GiB, about 82% of llama.cpp's speed on byte-identical weights; a 4-bit GPU kernel fix gave 3.1x faster decode.
 - Reaction-Wheel Balancing Cube (in progress, with a partner): balances on its corner using three reaction wheels. He wrote the original Arduino control code (IMU, quaternions, PID); now porting to an STM32F411.
-- Canadian Data Centre Deal Tracker: a sourced map of Canada's data centre buildout (40 projects, 17 deals, 5 provinces), every fact backed by a verbatim source quote, built with Codex.
+- Canadian Data Centre Deal Tracker: a sourced map of Canada's data centre buildout (40 projects, 17 deals, 5 provinces), every fact backed by a verbatim source quote, built with Codex. Live: https://ashwathram.ca/dc-deal-tracker/site/
 - UniMate: AI academic planning assistant built in 12 hours by a team of four at Pivot Hacks 2026; he built the Chrome extension. Won Best Use of Snowflake and Best Use of Backboard.io.
 - Sidecall: breach-response tool for private-equity portfolios, built by a team of four at Cal Hacks 13.0.
 
