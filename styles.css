@@ -614,3 +614,21 @@ h3 {
   .rise { opacity: 1; transform: none; filter: none; }
   .progress { display: none; }
 }
+
+/* Recent commits */
+.commits { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border); }
+.commits li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.commits a { color: var(--fg); text-decoration: none; }
+.commits a:hover { text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
+.commits .mono { color: var(--faint); font-size: 0.75rem; white-space: nowrap; }
+.commits-note { margin: 1rem 0 0; color: var(--faint); font-size: 0.75rem; }
+@media (max-width: 720px) {
+  .commits li { flex-direction: column; gap: 0.25rem; }
+}

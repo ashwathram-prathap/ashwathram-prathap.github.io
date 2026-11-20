@@ -383,6 +383,19 @@
       </div>
     </section>
 
+    <section class="frame block" aria-labelledby="activity">
+      <div class="block-head">
+        <span class="index">06</span>
+        <h2 id="activity">Recent commits</h2>
+      </div>
+      <div class="block-body">
+        <ol class="commits" id="commit-feed" aria-live="polite" hidden></ol>
+        <p class="mono commits-note" id="commit-note">
+          Latest public pushes from <a class="text-link" href="https://github.com/ashwathram-prathap">github.com/ashwathram-prathap</a>. Private repositories are not shown.
+        </p>
+      </div>
+    </section>
+
     <section class="frame contact" aria-labelledby="contact">
       <h2 id="contact">Let's talk.</h2>
       <p class="lede">Hiring for Summer 2027, building something, or just want to compare notes? Email is fastest.</p>
@@ -467,6 +480,60 @@
       }, { passive: true });
       drawProgress();
 
+      /* Recent public commits from GitHub. Fails quietly: the link above stays if the API is unreachable */
+      (function () {
+        var list = document.getElementById("commit-feed");
+        if (!list || !window.fetch) return;
+        var USER = "ashwathram-prathap";
+        var KEY = "commits-v1";
+        function ago(iso) {
+          var s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+          if (s < 3600) return Math.max(1, Math.round(s / 60)) + " min ago";
+          if (s < 86400) return Math.round(s / 3600) + " h ago";
+          var d = Math.round(s / 86400);
+          return d < 30 ? d + " d ago" : new Date(iso).toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" });
+        }
+        function parse(events) {
+          var seen = {}, out = [];
+          events.forEach(function (ev) {
+            if (ev.type !== "PushEvent" || !ev.payload || !ev.payload.commits) return;
+            ev.payload.commits.slice().reverse().forEach(function (c) {
+              if (!c.sha || seen[c.sha]) return;
+              seen[c.sha] = true;
+              out.push({ sha: c.sha, repo: ev.repo.name, msg: String(c.message || "").split("\n")[0], at: ev.created_at });
+            });
+          });
+          return out.slice(0, 8);
+        }
+        function draw(items) {
+          if (!items.length) return;
+          items.forEach(function (c) {
+            var li = document.createElement("li");
+            var a = document.createElement("a");
+            a.href = "https://github.com/" + c.repo + "/commit/" + c.sha;
+            a.textContent = c.msg.length > 90 ? c.msg.slice(0, 87) + "..." : c.msg;
+            var meta = document.createElement("span");
+            meta.className = "mono";
+            meta.textContent = c.repo.replace(USER + "/", "") + " · " + ago(c.at);
+            li.appendChild(a);
+            li.appendChild(meta);
+            list.appendChild(li);
+          });
+          list.hidden = false;
+        }
+        var cached = null;
+        try { cached = JSON.parse(sessionStorage.getItem(KEY)); } catch (e) {}
+        if (cached && Date.now() - cached.t < 600000) { draw(cached.items); return; }
+        fetch("https://api.github.com/users/" + USER + "/events/public?per_page=100", { headers: { Accept: "application/vnd.github+json" } })
+          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+          .then(function (events) {
+            var items = parse(events);
+            try { sessionStorage.setItem(KEY, JSON.stringify({ t: Date.now(), items: items })); } catch (e) {}
+            draw(items);
+          })
+          .catch(function () {});
+      })();
+
       /* Content rises in, once, as it scrolls into view */
       if (!calm && "IntersectionObserver" in window) {
         var groups = document.querySelectorAll(".stats, .block, .contact");
@@ -478,7 +545,7 @@
           });
         }, { rootMargin: "0px 0px -10% 0px" });
         groups.forEach(function (group) {
-          group.querySelectorAll(".stats > div, .block-head, .project, .row, .skills, .contact > *").forEach(function (el, i) {
+          group.querySelectorAll(".stats > div, .block-head, .project, .row, .skills, .commits, .commits-note, .contact > *").forEach(function (el, i) {
             el.classList.add("rise");
             el.style.transitionDelay = Math.min(i, 5) * 70 + "ms";
             /* Drop the stagger afterwards so hover effects stay instant */
