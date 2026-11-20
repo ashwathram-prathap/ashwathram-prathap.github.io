@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ashwathram Prathap</title>
-  <meta name="description" content="Ashwathram Prathap: computer science at Waterloo, business at Laurier. Builds full-stack AI products. Open to a Summer 2027 co-op in software, AI, product or finance.">
+  <meta name="description" content="Ashwathram Prathap: computer science at Waterloo, business at Laurier. Builds AI products and low-level systems. Open to a Summer 2027 co-op in software, AI, product or finance.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Ashwathram Prathap">
-  <meta property="og:description" content="Computer science at Waterloo, business at Laurier. Builds full-stack AI products.">
+  <meta property="og:description" content="Computer science at Waterloo, business at Laurier. Builds AI products and low-level systems.">
   <meta property="og:url" content="https://ashwathram.ca">
   <meta name="color-scheme" content="light dark">
   <script>
@@ -47,7 +47,7 @@
     <section class="frame hero" id="top" aria-label="Introduction">
       <p class="status"><span class="dot" aria-hidden="true"></span>Open to a Summer 2027 co-op in software, AI, product or finance</p>
       <h1>Ashwathram Prathap</h1>
-      <p class="lede">Computer science at the University of Waterloo, business at Wilfrid Laurier. I build full-stack AI products, from Convex backends to Chrome extensions.</p>
+      <p class="lede">Computer science at the University of Waterloo, business at Wilfrid Laurier. I build AI products and low-level systems, from an LLM inference engine in C++ and Apple Metal to a Chrome extension.</p>
       <div class="actions">
         <a class="btn btn-primary" href="resume.pdf">Resume</a>
         <a class="btn" href="mailto:prathapashwathram@gmail.com">Email</a>
@@ -69,8 +69,8 @@
         <dd>Sponsor awards at Pivot Hacks 2026</dd>
       </div>
       <div>
-        <dt>1.4s</dt>
-        <dd>For Sidecall to hold 304 payments across 303 companies</dd>
+        <dt>82%</dt>
+        <dd>Of llama.cpp's decode speed on my from-scratch LLM engine (Qwen2.5-7B, 4-bit)</dd>
       </div>
       <div>
         <dt>$4M/yr</dt>
@@ -95,7 +95,7 @@
           </header>
           <dl class="facts">
             <dt>What it is</dt>
-            <dd>A large language model inference engine built from scratch in C++20 and Apple Metal on my MacBook, by directing Codex AI coding agents. It includes a BPE tokenizer, KV cache, grouped-query attention and 4-bit quantization.</dd>
+            <dd>A large language model inference engine built from scratch in C++20 and Apple Metal on my MacBook, by directing Codex AI coding agents. It runs GPT-2 and Qwen2.5 (0.5B and 7B), with a BPE tokenizer, KV cache, grouped-query attention and 4-bit quantization.</dd>
             <dt>Results</dt>
             <dd>Runs Qwen2.5-7B in 4-bit at 22.3 tokens/s in 4.09 GiB, about 82% of llama.cpp's speed on byte-identical weights. A 4-bit GPU kernel fix raised weight bandwidth from 29 to 97 GB/s for 3.1x faster decode, with logits matching Hugging Face.</dd>
           </dl>
@@ -118,7 +118,7 @@
             <dt>My part</dt>
             <dd>I wrote the original Arduino control code (IMU reads, quaternion orientation math, PID loop); my partner did the CAD.</dd>
             <dt>Status</dt>
-            <dd>First prototype built in 4 days. Now porting to an STM32F411 with a hardware-timed loop: a 500 Hz attitude filter and a 200 Hz state-feedback controller.</dd>
+            <dd>First prototype built in 4 days. Now porting the control to an STM32F411 with a hardware-timed loop (a 500 Hz attitude filter and a 200 Hz state-feedback controller) while redesigning the flywheel and brackets and learning PCB design.</dd>
           </dl>
           <footer class="project-foot">
             <ul class="chips" aria-label="Stack">
@@ -176,8 +176,6 @@
           <dl class="facts">
             <dt>What it does</dt>
             <dd>Breach response for private-equity portfolios. Flags sister companies that share a breached vendor login and holds at-risk payments until a controller verifies them. Claude drafts the alerts; holds stay rule-based.</dd>
-            <dt>My part</dt>
-            <dd>Much of the Convex backend, plus parts of the React and TypeScript frontend and the payments flow.</dd>
             <dt>Results</dt>
             <dd>0 misses and 0 false holds across 18 test scenarios. One report holds 304 payments across 303 companies in about 1.4 s.</dd>
           </dl>
