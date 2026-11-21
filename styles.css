@@ -1216,7 +1216,10 @@ h3 {
 .footer .webring a:hover { color: var(--accent); }
 .webring img { display: block; width: 24px; height: 24px; opacity: 0.8; transition: opacity 0.15s ease, transform 0.3s ease; }
 .webring a:hover img { opacity: 1; transform: rotate(-12deg); }
-:root[data-theme="dark"] .webring img { filter: invert(1); }
+.webring .ring-dark { display: none; }
+:root[data-theme="dark"] .webring .ring-light { display: none; }
+:root[data-theme="dark"] .webring .ring-dark { display: block; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .webring img { filter: invert(1); }
+  :root:not([data-theme="light"]) .webring .ring-light { display: none; }
+  :root:not([data-theme="light"]) .webring .ring-dark { display: block; }
 }
