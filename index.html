@@ -78,16 +78,20 @@
   </script>
   <meta name="color-scheme" content="light dark">
   <script>
-    /* Apply a saved theme before paint so the page doesn't flash */
+    /* Apply the saved theme and the requested view before paint so nothing flashes */
     try {
       var saved = localStorage.getItem("theme");
       if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
     } catch (e) {}
+    (function () {
+      var v = new URLSearchParams(location.search).get("view");
+      document.documentElement.dataset.lens = v === "engineering" ? "tech" : v === "business" ? "biz" : "all";
+    })();
   </script>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -95,11 +99,16 @@
 
   <header class="nav">
     <div class="frame nav-inner">
-      <a class="wordmark" href="#top">Ashwathram Prathap</a>
+      <a class="wordmark" href="#top"><span class="wm-cs">Ashwathram</span> <span class="wm-bba">Prathap</span></a>
+      <div class="lens lens-compact" role="group" aria-label="View this page as">
+        <button type="button" class="lens-btn" data-lens="all" aria-pressed="true">All</button>
+        <button type="button" class="lens-btn" data-lens="tech" aria-pressed="false">CS</button>
+        <button type="button" class="lens-btn" data-lens="biz" aria-pressed="false">BBA</button>
+      </div>
       <nav class="sections" aria-label="Sections">
         <a href="#projects">Projects</a>
         <a href="#experience">Experience</a>
-        <a href="#leadership">Leadership</a>
+        <a href="#leadership" data-show="all biz">Leadership</a>
         <a href="resume.pdf">Resume</a>
       </nav>
       <button class="icon-btn theme-toggle" type="button" aria-label="Switch to dark mode">
@@ -111,54 +120,90 @@
   </header>
 
   <main id="main">
-    <section class="frame hero" id="top" aria-label="Introduction">
-      <p class="status"><span class="dot" aria-hidden="true"></span>Open to a Summer 2027 co-op in software, AI, product or finance</p>
-      <h1>Ashwathram Prathap</h1>
-      <p class="lede">Computer science at the University of Waterloo, business at Wilfrid Laurier. I build AI products and low-level systems, from an LLM inference engine in C++ and Apple Metal to a Chrome extension.</p>
-      <div class="actions">
-        <a class="btn btn-primary" href="resume.pdf">Resume</a>
-        <a class="btn" href="mailto:prathapashwathram@gmail.com">Email</a>
-        <a class="btn" href="https://github.com/ashwathram-prathap">GitHub</a>
-        <a class="btn" href="https://www.linkedin.com/in/ashwathram-prathap/">LinkedIn</a>
+    <section class="frame hero" id="top" aria-labelledby="name">
+      <h1 id="name" class="sr-only">Ashwathram Prathap</h1>
+      <div class="worlds">
+        <div class="world world-cs">
+          <div class="world-inner">
+            <p class="world-label">University of Waterloo <span>Computer Science</span></p>
+            <p class="world-name" aria-hidden="true">Ashwathram<span class="caret"></span></p>
+            <div class="term" role="group" aria-label="LLM inference engine benchmark">
+              <p class="term-c">// llm-engine · Qwen2.5-7B · 4-bit · Metal</p>
+              <p><span>decode</span><b>22.3 tok/s</b></p>
+              <p><span>memory</span><b>4.09 GiB</b></p>
+              <p><span>vs llama.cpp</span><b>82%</b></p>
+              <p><span>4-bit kernel fix</span><b>3.1x faster</b></p>
+            </div>
+          </div>
+        </div>
+        <div class="world world-bba">
+          <div class="world-inner">
+            <p class="world-label">Wilfrid Laurier University <span>Business Administration</span></p>
+            <p class="world-name" aria-hidden="true">Prathap</p>
+            <dl class="ledger" aria-label="Business highlights">
+              <div><dt>Data centre deals mapped</dt><dd>17</dd></div>
+              <div><dt>Data centre projects sourced</dt><dd>40</dd></div>
+              <div><dt>Federal budget request drafted</dt><dd>$4M/yr</dd></div>
+              <div><dt>Raised alongside FRC teammates</dt><dd>$100K+</dd></div>
+            </dl>
+          </div>
+        </div>
+        <div class="seam" aria-hidden="true"><span>CS <i>×</i> BBA</span></div>
       </div>
-      <div class="now">
-        <span class="label">Now</span>
-        <ul>
-          <li>Running Qwen2.5-7B on my own LLM inference engine, built from scratch in C++ and Apple Metal.</li>
-          <li>Co-building a reaction-wheel cube that balances on its corner, now porting it to an STM32, as a step toward a scratch-built drone.</li>
-        </ul>
+
+      <div class="intro">
+        <div class="intro-main">
+          <p class="status"><span class="dot" aria-hidden="true"></span>Open to a Summer 2027 co-op in software, AI, product or finance</p>
+          <p class="lede" data-show="all">Computer science at Waterloo, business at Laurier: two worlds, one person. I build AI products and low-level systems, and I've worked the business side through sponsorship, marketing and federal policy.</p>
+          <p class="lede" data-show="tech">I build low-level AI systems. My LLM inference engine, built from scratch in C++ and Apple Metal by directing Codex agents, runs Qwen2.5-7B in 4-bit at 82% of llama.cpp's speed.</p>
+          <p class="lede" data-show="biz">I study business at Laurier alongside computer science at Waterloo. I've raised sponsorship with my FRC team, drafted a $4M-a-year federal budget request, and built a sourced tracker of Canada's data centre deals.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="resume.pdf">Resume</a>
+            <a class="btn" href="mailto:prathapashwathram@gmail.com">Email</a>
+            <a class="btn" href="https://github.com/ashwathram-prathap">GitHub</a>
+            <a class="btn" href="https://www.linkedin.com/in/ashwathram-prathap/">LinkedIn</a>
+          </div>
+        </div>
+        <div class="intro-side">
+          <p class="lens-q">Read this page as</p>
+          <div class="lens lens-big" role="group" aria-label="View this page as">
+            <button type="button" class="lens-btn" data-lens="all" aria-pressed="true"><b>Both worlds</b><span>Everything</span></button>
+            <button type="button" class="lens-btn" data-lens="tech" aria-pressed="false"><b>Engineer</b><span>Waterloo CS</span></button>
+            <button type="button" class="lens-btn" data-lens="biz" aria-pressed="false"><b>Business</b><span>Laurier BBA</span></button>
+          </div>
+          <div class="latest">
+            <span class="label">Latest</span>
+            <ul>
+              <li data-show="all tech">Running Qwen2.5-7B on my own LLM inference engine, built from scratch in C++ and Apple Metal.</li>
+              <li data-show="all tech">Co-building a reaction-wheel cube that balances on its corner, now porting it to an STM32, as a step toward a scratch-built drone.</li>
+              <li data-show="all biz">Built a sourced tracker of Canada's data centre buildout: 40 projects and 17 deals, every fact tied to a source quote.</li>
+            </ul>
+          </div>
+        </div>
       </div>
+      <p class="sr-only" id="lens-status" aria-live="polite"></p>
     </section>
 
     <dl class="frame stats" aria-label="Highlights">
-      <div>
-        <dt>2</dt>
-        <dd>Sponsor awards at Pivot Hacks 2026</dd>
-      </div>
-      <div>
-        <dt>82%</dt>
-        <dd>Of llama.cpp's decode speed on my from-scratch LLM engine (Qwen2.5-7B, 4-bit)</dd>
-      </div>
-      <div>
-        <dt>$4M/yr</dt>
-        <dd>Sought over five years in a federal budget request I drafted</dd>
-      </div>
-      <div>
-        <dt>3rd Dan</dt>
-        <dd>Taekwondo black belt and former instructor</dd>
-      </div>
+      <div data-show="all tech" data-side="cs"><dt>82%</dt><dd>Of llama.cpp's decode speed on my from-scratch LLM engine (Qwen2.5-7B, 4-bit)</dd></div>
+      <div data-show="tech" data-side="cs"><dt>3.1x</dt><dd>Faster decode after a 4-bit GPU kernel fix (29 to 97 GB/s)</dd></div>
+      <div data-show="all biz" data-side="bba"><dt>$4M/yr</dt><dd>Sought over five years in a federal budget request I drafted</dd></div>
+      <div data-show="biz" data-side="bba"><dt>$100K+</dt><dd>Raised alongside teammates for my FRC team</dd></div>
+      <div data-show="biz" data-side="bba"><dt>17</dt><dd>Data centre deals mapped, each backed by a source quote</dd></div>
+      <div data-show="all tech" data-side="both"><dt>2</dt><dd>Sponsor awards at Pivot Hacks 2026</dd></div>
+      <div data-show="all tech biz" data-side="both"><dt>3rd Dan</dt><dd>Taekwondo black belt and former instructor</dd></div>
     </dl>
 
-    <section class="frame block" aria-labelledby="projects">
+    <section class="frame block" aria-labelledby="projects" data-key="projects">
       <div class="block-head">
         <span class="index">01</span>
         <h2 id="projects">Projects</h2>
       </div>
       <div class="block-body">
-        <article class="project">
+        <article class="project" data-side="cs" data-show="all tech">
           <header class="project-head">
             <h3>LLM Inference Engine</h3>
-            <p class="mono">Built with Codex · 2026</p>
+            <p class="mono"><span class="side-tag">CS</span> Built with Codex · 2026</p>
           </header>
           <dl class="facts">
             <dt>What it is</dt>
@@ -174,31 +219,12 @@
           </footer>
         </article>
 
-        <article class="project">
-          <header class="project-head">
-            <h3>Reaction-Wheel Balancing Cube</h3>
-            <p class="mono">With a partner · <span class="wip">In Progress</span></p>
-          </header>
-          <dl class="facts">
-            <dt>What it does</dt>
-            <dd>A cube that balances on its corner using three reaction wheels, as a first step toward building a UAV from scratch.</dd>
-            <dt>My part</dt>
-            <dd>I wrote the original Arduino control code (IMU reads, quaternion orientation math, PID loop); my partner did the CAD.</dd>
-            <dt>Status</dt>
-            <dd>First prototype built in 4 days. Now porting the control to an STM32F411 with a hardware-timed loop (a 500 Hz attitude filter and a 200 Hz state-feedback controller) while redesigning the flywheel and brackets and learning PCB design.</dd>
-          </dl>
-          <footer class="project-foot">
-            <ul class="chips" aria-label="Stack">
-              <li>Arduino C++</li><li>STM32</li><li>IMU</li>
-            </ul>
-          </footer>
-        </article>
-
-        <article class="project">
+        <article class="project project-bridge" data-side="both" data-show="all tech biz">
           <header class="project-head">
             <h3>Canadian Data Centre Deal Tracker</h3>
-            <p class="mono">Built with Codex · 2026</p>
+            <p class="mono"><span class="side-tag">CS × BBA</span> Built with Codex · 2026</p>
           </header>
+          <p class="bridge-note">Where the two degrees meet: deal research built like software.</p>
           <dl class="facts">
             <dt>What it is</dt>
             <dd>A sourced map of Canada's data centre buildout: 40 projects and 17 deals across 5 provinces.</dd>
@@ -215,10 +241,30 @@
           </footer>
         </article>
 
-        <article class="project">
+        <article class="project" data-side="cs" data-show="all tech">
+          <header class="project-head">
+            <h3>Reaction-Wheel Balancing Cube</h3>
+            <p class="mono"><span class="side-tag">CS</span> With a partner · <span class="wip">In Progress</span></p>
+          </header>
+          <dl class="facts">
+            <dt>What it does</dt>
+            <dd>A cube that balances on its corner using three reaction wheels, as a first step toward building a UAV from scratch.</dd>
+            <dt>My part</dt>
+            <dd>I wrote the original Arduino control code (IMU reads, quaternion orientation math, PID loop); my partner did the CAD.</dd>
+            <dt>Status</dt>
+            <dd>First prototype built in 4 days. Now porting the control to an STM32F411 with a hardware-timed loop (a 500 Hz attitude filter and a 200 Hz state-feedback controller) while redesigning the flywheel and brackets and learning PCB design.</dd>
+          </dl>
+          <footer class="project-foot">
+            <ul class="chips" aria-label="Stack">
+              <li>Arduino C++</li><li>STM32</li><li>IMU</li>
+            </ul>
+          </footer>
+        </article>
+
+        <article class="project" data-side="cs" data-show="all tech">
           <header class="project-head">
             <h3>UniMate</h3>
-            <p class="mono">Pivot Hacks 2026 · Team of 4 · 12 hours</p>
+            <p class="mono"><span class="side-tag">CS</span> Pivot Hacks 2026 · Team of 4 · 12 hours</p>
           </header>
           <dl class="facts">
             <dt>What it does</dt>
@@ -232,14 +278,13 @@
             <ul class="chips" aria-label="Stack">
               <li>TypeScript</li><li>Node.js</li><li>Snowflake Cortex</li><li>ElevenLabs</li>
             </ul>
-            <!-- Add when ready: <a class="text-link" href="https://github.com/ashwathram-prathap/unimate">Code</a> <a class="text-link" href="DEMO-LINK">Demo</a> -->
           </footer>
         </article>
 
-        <article class="project">
+        <article class="project" data-side="both" data-show="all tech biz">
           <header class="project-head">
             <h3>Sidecall</h3>
-            <p class="mono">Cal Hacks 13.0 · UC Berkeley · Team of 4 · 2026</p>
+            <p class="mono"><span class="side-tag">CS × BBA</span> Cal Hacks 13.0 · UC Berkeley · Team of 4 · 2026</p>
           </header>
           <dl class="facts">
             <dt>What it does</dt>
@@ -257,29 +302,29 @@
       </div>
     </section>
 
-    <section class="frame block" aria-labelledby="experience">
+    <section class="frame block" aria-labelledby="experience" data-key="experience">
       <div class="block-head">
         <span class="index">02</span>
         <h2 id="experience">Experience</h2>
       </div>
       <div class="block-body">
-        <article class="row">
+        <article class="row" data-side="both" data-show="all tech biz">
           <header>
             <h3>Team Lead &amp; Business Lead, FIRST Robotics Competition</h3>
-            <p class="org">Bishop P. F. Reding CSS, Milton</p>
+            <p class="org"><span class="side-tag">CS × BBA</span> Bishop P. F. Reding CSS, Milton</p>
             <p class="mono when">2024 to 2026</p>
           </header>
           <ul>
-            <li>Raised over $100,000 alongside teammates for build, travel and competitions.</li>
-            <li>Ran a 12-student business team: sponsor outreach, cold-calling training and in-kind sponsorships.</li>
+            <li data-show="all biz">Raised over $100,000 alongside teammates for build, travel and competitions.</li>
+            <li data-show="all biz">Ran a 12-student business team: sponsor outreach, cold-calling training and in-kind sponsorships.</li>
             <li>Led the full team and directed development of the robot's autonomous driving routines for competition matches.</li>
           </ul>
         </article>
 
-        <article class="row">
+        <article class="row" data-side="bba" data-show="all biz">
           <header>
             <h3>Social Media &amp; Marketing Consultant</h3>
-            <p class="org">Zebra Canada</p>
+            <p class="org"><span class="side-tag">BBA</span> Zebra Canada</p>
             <p class="mono when">2025 to 2026</p>
           </header>
           <ul>
@@ -288,10 +333,10 @@
           </ul>
         </article>
 
-        <article class="row">
+        <article class="row" data-side="bba" data-show="all biz">
           <header>
             <h3>Policy &amp; Communications Intern</h3>
-            <p class="org">Office of the Member of Parliament, Milton</p>
+            <p class="org"><span class="side-tag">BBA</span> Office of the Member of Parliament, Milton</p>
             <p class="mono when">2025</p>
           </header>
           <ul>
@@ -300,10 +345,10 @@
           </ul>
         </article>
 
-        <article class="row">
+        <article class="row" data-side="both" data-show="all biz">
           <header>
             <h3>Taekwondo Instructor</h3>
-            <p class="org">Top Level Taekwondo &amp; Martial Arts Academy</p>
+            <p class="org"><span class="side-tag">3rd Dan</span> Top Level Taekwondo &amp; Martial Arts Academy</p>
             <p class="mono when">2021 to 2024</p>
           </header>
           <ul>
@@ -313,16 +358,16 @@
       </div>
     </section>
 
-    <section class="frame block" aria-labelledby="leadership">
+    <section class="frame block" aria-labelledby="leadership" data-key="leadership" data-show="all biz">
       <div class="block-head">
         <span class="index">03</span>
         <h2 id="leadership">Leadership</h2>
       </div>
       <div class="block-body">
-        <article class="row">
+        <article class="row" data-side="bba">
           <header>
             <h3>Founder &amp; President, Student Business &amp; Finance Association</h3>
-            <p class="org">Oakville and Milton</p>
+            <p class="org"><span class="side-tag">BBA</span> Oakville and Milton</p>
             <p class="mono when">2024 to 2026</p>
           </header>
           <ul>
@@ -331,10 +376,10 @@
           </ul>
         </article>
 
-        <article class="row">
+        <article class="row" data-side="bba">
           <header>
             <h3>Lead Senator &amp; Human Rights Council Chair</h3>
-            <p class="org">Halton Catholic District School Board Student Senate</p>
+            <p class="org"><span class="side-tag">BBA</span> Halton Catholic District School Board Student Senate</p>
             <p class="mono when">2024 to 2026</p>
           </header>
           <ul>
@@ -344,49 +389,28 @@
       </div>
     </section>
 
-    <section class="frame block" aria-labelledby="education">
+    <section class="frame block" aria-labelledby="skills" data-key="skills">
       <div class="block-head">
         <span class="index">04</span>
-        <h2 id="education">Education</h2>
-      </div>
-      <div class="block-body">
-        <article class="row">
-          <header>
-            <h3>University of Waterloo</h3>
-            <p class="org">Computer Science, co-op · Business &amp; CS Double Degree · Member, WARG</p>
-          </header>
-        </article>
-        <article class="row">
-          <header>
-            <h3>Wilfrid Laurier University</h3>
-            <p class="org">Honours Bachelor of Business Administration</p>
-          </header>
-        </article>
-      </div>
-    </section>
-
-    <section class="frame block" aria-labelledby="skills">
-      <div class="block-head">
-        <span class="index">05</span>
         <h2 id="skills">Skills</h2>
       </div>
       <div class="block-body">
         <dl class="facts skills">
-          <dt>Code</dt>
-          <dd><ul class="chips"><li>Python</li><li>Java</li><li>TypeScript</li><li>Node.js</li><li>C++ (Arduino)</li><li>Apple Metal</li><li>STM32</li></ul></dd>
+          <dt data-show="all tech">Code</dt>
+          <dd data-show="all tech"><ul class="chips"><li>Python</li><li>Java</li><li>TypeScript</li><li>Node.js</li><li>C++ (Arduino)</li><li>Apple Metal</li><li>STM32</li></ul></dd>
           <dt>AI</dt>
           <dd><ul class="chips"><li>Claude Code</li><li>Codex</li><li>Snowflake Cortex</li><li>ElevenLabs</li></ul></dd>
-          <dt>Business</dt>
-          <dd><ul class="chips"><li>Power BI</li><li>Excel financial modelling</li></ul></dd>
+          <dt data-show="all biz">Business</dt>
+          <dd data-show="all biz"><ul class="chips"><li>Power BI</li><li>Excel financial modelling</li></ul></dd>
           <dt>Other</dt>
           <dd>Google AI Professional Certificate (2026). Government of Canada Reliability Security Clearance (2025). English and Tamil.</dd>
         </dl>
       </div>
     </section>
 
-    <section class="frame block" aria-labelledby="activity">
+    <section class="frame block" aria-labelledby="activity" data-key="activity" data-show="all tech">
       <div class="block-head">
-        <span class="index">06</span>
+        <span class="index">05</span>
         <h2 id="activity">Activity</h2>
       </div>
       <div class="block-body">
@@ -399,8 +423,28 @@
       </div>
     </section>
 
+    <section class="frame block" aria-labelledby="education" data-key="education">
+      <div class="block-head">
+        <span class="index">06</span>
+        <h2 id="education">Education</h2>
+      </div>
+      <div class="block-body edu">
+        <article class="edu-card" data-side="cs">
+          <p class="mono">Computer Science, co-op</p>
+          <h3>University of Waterloo</h3>
+          <p class="org">Business &amp; CS Double Degree · Member, WARG</p>
+        </article>
+        <span class="edu-join" aria-hidden="true">×</span>
+        <article class="edu-card" data-side="bba">
+          <p class="mono">Business Administration</p>
+          <h3>Wilfrid Laurier University</h3>
+          <p class="org">Honours Bachelor of Business Administration</p>
+        </article>
+      </div>
+    </section>
+
     <section class="frame contact" aria-labelledby="contact">
-      <h2 id="contact">Let's talk.</h2>
+      <h2 id="contact">Let's <em>talk</em><b>.</b></h2>
       <p class="lede">Hiring for Summer 2027, building something, or just want to compare notes? Email is fastest.</p>
       <div class="actions">
         <a class="btn btn-primary" href="mailto:prathapashwathram@gmail.com">prathapashwathram@gmail.com</a>
@@ -421,6 +465,7 @@
   <script>
     (function () {
       var root = document.documentElement;
+      var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       /* Light and dark mode: follows the device until the visitor picks one */
       var toggle = document.querySelector(".theme-toggle");
@@ -439,6 +484,64 @@
       });
       systemDark.addEventListener("change", syncToggle);
       syncToggle();
+
+      /* The lens: Both worlds, Engineer (Waterloo CS) or Business (Laurier BBA).
+         It filters and reorders the page, and the URL (?view=engineering / ?view=business) can be shared */
+      var ORDER = {
+        all: ["projects", "experience", "leadership", "skills", "activity", "education"],
+        tech: ["projects", "activity", "skills", "experience", "education"],
+        biz: ["experience", "leadership", "projects", "skills", "education"]
+      };
+      var NAMES = { all: "both worlds", tech: "the engineering view", biz: "the business view" };
+      var main = document.getElementById("main");
+      var contact = document.querySelector(".contact");
+      var buttons = document.querySelectorAll(".lens-btn");
+      var status = document.getElementById("lens-status");
+
+      function arrange(lens) {
+        ORDER[lens].forEach(function (key) {
+          var sec = main.querySelector('.block[data-key="' + key + '"]');
+          if (sec) main.insertBefore(sec, contact);
+        });
+        var n = 0;
+        main.querySelectorAll(".block").forEach(function (sec) {
+          if (getComputedStyle(sec).display === "none") return;
+          n += 1;
+          sec.querySelector(".index").textContent = (n < 10 ? "0" : "") + n;
+        });
+      }
+      function apply(lens, push) {
+        root.dataset.lens = lens;
+        buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lens === lens)); });
+        arrange(lens);
+        if (push) {
+          var url = new URL(location.href);
+          if (lens === "all") url.searchParams.delete("view");
+          else url.searchParams.set("view", lens === "tech" ? "engineering" : "business");
+          history.replaceState(null, "", url);
+          status.textContent = "Showing " + NAMES[lens] + ".";
+        }
+      }
+      buttons.forEach(function (b) {
+        b.addEventListener("click", function () {
+          var lens = b.dataset.lens;
+          if (lens === root.dataset.lens) return;
+          if (!calm && document.startViewTransition) document.startViewTransition(function () { apply(lens, true); });
+          else apply(lens, true);
+        });
+      });
+      apply(root.dataset.lens || "all", false);
+
+      /* The seam leans toward the pointer, a little */
+      var worlds = document.querySelector(".worlds");
+      if (!calm && window.matchMedia("(hover: hover) and (min-width: 801px)").matches) {
+        worlds.addEventListener("pointermove", function (e) {
+          var r = worlds.getBoundingClientRect();
+          var x = (e.clientX - r.left) / r.width - 0.5;
+          worlds.style.setProperty("--seam-nudge", (x * 8).toFixed(2));
+        });
+        worlds.addEventListener("pointerleave", function () { worlds.style.setProperty("--seam-nudge", "0"); });
+      }
 
       /* Copy email button */
       var copy = document.querySelector(".copy");
@@ -468,8 +571,6 @@
         document.querySelectorAll(".block").forEach(function (s) { spy.observe(s); });
       }
 
-      var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
       /* Reading progress: a thin line along the bottom of the nav */
       var bar = document.querySelector(".progress");
       var ticking = false;
@@ -487,7 +588,7 @@
       (function () {
         var grid = document.getElementById("heat");
         if (!grid || !window.fetch) return;
-        var URL = "https://github-contributions-api.jogruber.de/v4/ashwathram-prathap?y=last";
+        var URL_ = "https://github-contributions-api.jogruber.de/v4/ashwathram-prathap?y=last";
         var KEY = "heat-v1";
         function draw(data) {
           var days = data && data.contributions;
@@ -517,7 +618,7 @@
         var cached = null;
         try { cached = JSON.parse(sessionStorage.getItem(KEY)); } catch (e) {}
         if (cached && Date.now() - cached.t < 3600000) { draw(cached.data); return; }
-        fetch(URL)
+        fetch(URL_)
           .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
           .then(function (data) {
             try { sessionStorage.setItem(KEY, JSON.stringify({ t: Date.now(), data: data })); } catch (e) {}
@@ -537,10 +638,9 @@
           });
         }, { rootMargin: "0px 0px -10% 0px" });
         groups.forEach(function (group) {
-          group.querySelectorAll(".stats > div, .block-head, .project, .row, .skills, .heat-scroll, .heat-note, .contact > *").forEach(function (el, i) {
+          group.querySelectorAll(".stats > div, .block-head, .project, .row, .skills, .heat-scroll, .heat-note, .edu-card, .contact > *").forEach(function (el, i) {
             el.classList.add("rise");
             el.style.transitionDelay = Math.min(i, 5) * 70 + "ms";
-            /* Drop the stagger afterwards so hover effects stay instant */
             el.addEventListener("transitionend", function () { el.style.transitionDelay = ""; }, { once: true });
           });
           rise.observe(group);
