@@ -87,6 +87,11 @@
       var v = new URLSearchParams(location.search).get("view");
       document.documentElement.dataset.lens = v === "engineering" ? "tech" : v === "business" ? "biz" : "all";
     })();
+    /* Hold the intro animation until the fonts have arrived, so a first visit sees it play properly */
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.documentElement.classList.add("booting");
+      setTimeout(function () { document.documentElement.classList.remove("booting"); }, 2500);
+    }
   </script>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -95,7 +100,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Tinos:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261121c">
+  <link rel="stylesheet" href="styles.css?v=20261121d">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -673,8 +678,27 @@
         document.querySelector('.lens-compact .lens-btn[data-lens="' + next + '"]').click();
       });
 
+      /* Release the intro once the key fonts are loaded, or after 1.2 s at most */
+      var introReady = new Promise(function (resolve) {
+        if (!root.classList.contains("booting")) { resolve(); return; }
+        var done = false;
+        function go() {
+          if (done) return;
+          done = true;
+          requestAnimationFrame(function () { root.classList.remove("booting"); resolve(); });
+        }
+        setTimeout(go, 1200);
+        if (document.fonts && document.fonts.load) {
+          Promise.all([
+            document.fonts.load('700 100px "Geist"'),
+            document.fonts.load('500 16px "Geist Mono"'),
+            document.fonts.load('italic 400 100px "Tinos"')
+          ]).then(go, go);
+        } else { go(); }
+      });
+
       /* Hero numbers count up once, like a tally */
-      if (!calm) {
+      if (!calm) introReady.then(function () {
         document.querySelectorAll(".ledger dd, .term b").forEach(function (el, i) {
           var txt = el.textContent, m = txt.match(/[\d.]+/);
           if (!m) return;
@@ -689,7 +713,7 @@
           }
           requestAnimationFrame(step);
         });
-      }
+      });
 
       /* GitHub contribution heatmap, drawn from a public JSON mirror of the profile graph. Fails quietly */
       (function () {

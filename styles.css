@@ -705,6 +705,12 @@ kbd {
   .ledger div:nth-child(4) { animation-delay: 1.2s; }
   .intro > * { animation: rise 0.7s 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 }
+/* While fonts load on a first visit, the intro waits at its first frame */
+:root.booting .worlds,
+:root.booting .term p,
+:root.booting .ledger div,
+:root.booting .intro > * { animation-play-state: paused; }
+
 @keyframes open {
   from { --seam-base: 50; clip-path: inset(0 50% 0 50% round 10px); }
   to { clip-path: inset(0 0 0 0 round 10px); }
