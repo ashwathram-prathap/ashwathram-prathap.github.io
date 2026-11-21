@@ -375,6 +375,7 @@ kbd {
 .world {
   position: absolute;
   inset: 0;
+  will-change: clip-path;
 }
 .world-cs {
   background:
@@ -412,12 +413,13 @@ kbd {
   justify-content: space-between;
   padding: 2.5rem;
   container-type: inline-size;
-  transition: width 0.9s cubic-bezier(0.65, 0, 0.25, 1);
 }
-.world-cs .world-inner { left: 0; width: calc((var(--seam-base) - var(--tilt) - 5) * 1%); }
+/* Layout is fixed at the 50/50 split; the lens scales the names with a transform instead of resizing columns,
+   so switching views never re-lays out the hero */
+.world-cs .world-inner { left: 0; width: calc((50 - var(--tilt) - 5) * 1%); }
 .world-bba .world-inner {
   right: 0;
-  width: calc((100 - var(--seam-base) - var(--tilt) - 5) * 1%);
+  width: calc((50 - var(--tilt) - 5) * 1%);
   align-items: flex-end;
   text-align: right;
 }
@@ -439,6 +441,11 @@ kbd {
   margin: 0;
   line-height: 0.9;
   white-space: nowrap;
+  will-change: transform;
+}
+@media (min-width: 901px) {
+  .world-cs .world-name { transform-origin: 0 50%; transform: scale(calc((var(--seam-base) - 10) / 40)); }
+  .world-bba .world-name { transform-origin: 100% 50%; transform: scale(calc((90 - var(--seam-base)) / 40)); }
 }
 .world-cs .world-name {
   font-family: var(--sans);
