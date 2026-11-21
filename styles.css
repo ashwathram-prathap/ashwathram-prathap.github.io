@@ -1209,3 +1209,14 @@ h3 {
   }
   .rise { opacity: 1; transform: none; filter: none; }
 }
+
+/* Waterloo CS webring (cs.uwatering.com) */
+.webring { display: flex; align-items: center; gap: 0.6rem; font-family: var(--mono); font-size: 0.85rem; }
+.footer .webring a { margin-left: 0; color: var(--muted); text-decoration: none; transition: color 0.15s ease; }
+.footer .webring a:hover { color: var(--accent); }
+.webring img { display: block; width: 24px; height: 24px; opacity: 0.8; transition: opacity 0.15s ease, transform 0.3s ease; }
+.webring a:hover img { opacity: 1; transform: rotate(-12deg); }
+:root[data-theme="dark"] .webring img { filter: invert(1); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .webring img { filter: invert(1); }
+}
