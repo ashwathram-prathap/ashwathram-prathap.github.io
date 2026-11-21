@@ -89,6 +89,9 @@
     })();
   </script>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#F7F5F0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0B0B0D" media="(prefers-color-scheme: dark)">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Tinos:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -99,7 +102,7 @@
 
   <header class="nav">
     <div class="frame nav-inner">
-      <a class="wordmark" href="#top"><span class="wm-cs">Ashwathram</span> <span class="wm-bba">Prathap</span></a>
+      <a class="wordmark" href="#top"><img class="mark" src="favicon.svg" alt="" width="22" height="22"><span class="wm-cs">Ashwathram</span><span class="wm-bba">Prathap</span></a>
       <div class="lens lens-compact" role="group" aria-label="View this page as">
         <button type="button" class="lens-btn" data-lens="all" aria-pressed="true">All</button>
         <button type="button" class="lens-btn" data-lens="tech" aria-pressed="false">CS</button>
@@ -129,7 +132,7 @@
             <p class="world-label">University of Waterloo <span>Computer Science</span></p>
             <p class="world-name" aria-hidden="true">Ashwathram<span class="caret"></span></p>
             <div class="term" role="group" aria-label="LLM inference engine benchmark">
-              <p class="term-c">// llm-engine: Qwen2.5-7B, 4-bit</p>
+              <p class="term-c">// Qwen2.5-7B, 4-bit</p>
               <p><span>decode</span><b>22.3 tok/s</b></p>
               <p><span>memory</span><b>4.09 GiB</b></p>
               <p><span>vs llama.cpp</span><b>82%</b></p>
@@ -166,7 +169,7 @@
           </div>
         </div>
         <div class="intro-side">
-          <p class="lens-q">Read this page as</p>
+          <p class="lens-q">Read this page as <span class="kbd-hint">or press <kbd>A</kbd> <kbd>E</kbd> <kbd>B</kbd></span></p>
           <div class="lens lens-big" role="group" aria-label="View this page as">
             <button type="button" class="lens-btn" data-lens="all" aria-pressed="true"><b>Both worlds</b><span>Everything</span></button>
             <button type="button" class="lens-btn" data-lens="tech" aria-pressed="false"><b>Engineer</b><span>Waterloo CS</span></button>
@@ -522,6 +525,7 @@
         root.dataset.lens = lens;
         buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lens === lens)); });
         arrange(lens);
+        if (window.drawMeter) window.drawMeter();
         if (push) {
           var url = new URL(location.href);
           if (lens === "all") url.searchParams.delete("view");
@@ -542,7 +546,7 @@
 
       /* The seam leans toward the pointer, a little */
       var worlds = document.querySelector(".worlds");
-      if (!calm && window.matchMedia("(hover: hover) and (min-width: 801px)").matches) {
+      if (!calm && window.matchMedia("(hover: hover) and (min-width: 901px)").matches) {
         worlds.addEventListener("pointermove", function (e) {
           var r = worlds.getBoundingClientRect();
           var x = (e.clientX - r.left) / r.width - 0.5;
@@ -579,31 +583,34 @@
         document.querySelectorAll(".block").forEach(function (s) { spy.observe(s); });
       }
 
-      /* Two-world meter: fills as the visitor actually reads CS and BBA items.
+      /* Two-world meter: fills as the visitor actually reads CS and BBA items in the current view.
          Gold grows from the left, purple from the right; when both are full they meet at the seam */
       (function () {
         var items = [].slice.call(document.querySelectorAll("main [data-side]"));
-        var seen = { cs: new Set(), bba: new Set() };
-        var total = { cs: 0, bba: 0 };
-        items.forEach(function (el) {
-          var s = el.dataset.side;
-          if (s === "cs" || s === "both") total.cs += 1;
-          if (s === "bba" || s === "both") total.bba += 1;
-        });
+        var seen = new Set();
         var mcs = document.querySelector(".meter-cs"), mbba = document.querySelector(".meter-bba");
         var count = document.getElementById("meter-count");
-        count.querySelector('[data-t="cs"]').textContent = total.cs;
-        count.querySelector('[data-t="bba"]').textContent = total.bba;
         var done = false;
         try { done = localStorage.getItem("both-worlds") === "1"; } catch (e) {}
         function draw() {
-          var c = seen.cs.size / total.cs, b = seen.bba.size / total.bba;
+          var tc = 0, tb = 0, sc = 0, sb = 0;
+          items.forEach(function (el) {
+            if (el.offsetParent === null) return;
+            var s = el.dataset.side, isC = s === "cs" || s === "both", isB = s === "bba" || s === "both";
+            if (isC) { tc += 1; if (seen.has(el)) sc += 1; }
+            if (isB) { tb += 1; if (seen.has(el)) sb += 1; }
+          });
+          var c = tc ? sc / tc : 1, b = tb ? sb / tb : 1;
           mcs.style.transform = "scaleX(" + c + ")";
           mbba.style.transform = "scaleX(" + b + ")";
-          count.querySelector('[data-n="cs"]').textContent = seen.cs.size;
-          count.querySelector('[data-n="bba"]').textContent = seen.bba.size;
-          count.classList.toggle("full", c >= 1 && b >= 1);
-          if (c >= 1 && b >= 1 && !done) {
+          count.querySelector('[data-n="cs"]').textContent = sc;
+          count.querySelector('[data-t="cs"]').textContent = tc;
+          count.querySelector('[data-n="bba"]').textContent = sb;
+          count.querySelector('[data-t="bba"]').textContent = tb;
+          var full = c >= 1 && b >= 1;
+          count.classList.toggle("full", full);
+          document.querySelector(".meter").classList.toggle("full", full);
+          if (full && !done) {
             done = true;
             try { localStorage.setItem("both-worlds", "1"); } catch (e) {}
             var box = document.getElementById("unlock");
@@ -613,20 +620,42 @@
             setTimeout(function () { box.classList.remove("show"); setTimeout(function () { box.hidden = true; }, 500); }, 14000);
           }
         }
-        if (!("IntersectionObserver" in window)) return;
+        window.drawMeter = draw;
+        if (!("IntersectionObserver" in window)) { items.forEach(function (el) { seen.add(el); }); draw(); return; }
+        /* Counts as read once half of it is on screen, or, for tall cards, once it fills a good part of the screen */
         var io = new IntersectionObserver(function (entries) {
+          var changed = false;
           entries.forEach(function (en) {
             if (!en.isIntersecting) return;
-            var el = en.target, s = el.dataset.side;
-            if (s === "cs" || s === "both") seen.cs.add(el);
-            if (s === "bba" || s === "both") seen.bba.add(el);
-            io.unobserve(el);
+            var need = Math.min(en.boundingClientRect.height * 0.5, window.innerHeight * 0.3);
+            if (en.intersectionRect.height + 1 < need) return;
+            seen.add(en.target);
+            io.unobserve(en.target);
+            changed = true;
+          });
+          if (changed) draw();
+        }, { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] });
+        items.forEach(function (el) { io.observe(el); });
+        /* Reaching the very bottom counts everything above it */
+        window.addEventListener("scroll", function () {
+          if (window.innerHeight + window.scrollY < document.documentElement.scrollHeight - 4) return;
+          items.forEach(function (el) {
+            if (el.offsetParent !== null && el.getBoundingClientRect().bottom < window.innerHeight) seen.add(el);
           });
           draw();
-        }, { threshold: 0.5 });
-        items.forEach(function (el) { io.observe(el); });
+        }, { passive: true });
         draw();
       })();
+
+      /* Keyboard: A for both worlds, E for engineer, B for business */
+      document.addEventListener("keydown", function (e) {
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        var t = e.target;
+        if (t && (t.isContentEditable || /^(input|textarea|select)$/i.test(t.tagName))) return;
+        var map = { a: "all", e: "tech", b: "biz" }, lens = map[e.key.toLowerCase()];
+        if (!lens) return;
+        document.querySelector('.lens-compact .lens-btn[data-lens="' + lens + '"]').click();
+      });
 
       /* The seam badge flips worlds: both, then engineering, then business */
       document.querySelector(".seam-btn").addEventListener("click", function () {
